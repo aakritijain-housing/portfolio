@@ -147,3 +147,14 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# macOS
+.DS_Store
+
+# Local-only working files (not part of the site)
+references/
+assets/css/Google_Sans_Flex/
+assets/css/Frame */
+assets/css/Frame *.png
+assets/img/iterations.png
+assets/img/iterations-2240.png
