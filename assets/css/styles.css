@@ -693,8 +693,9 @@ ul {
   border: 0;
 }
 
+/* Matches the hero PNG (1167 × 1269) so nothing is letterboxed */
 .hero__visual--device {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1167 / 1269;
 }
 
 .hero__visual--device img {
@@ -1328,6 +1329,17 @@ ul {
   font-size: var(--text-body);
   line-height: 1.6;
   color: var(--text-secondary);
+}
+
+/* Centred intro for a story that leads into a full-width component */
+.story__head--center {
+  justify-content: center;
+  text-align: center;
+}
+
+.story__lede--center {
+  margin-inline: auto;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
@@ -2315,6 +2327,7 @@ ul {
   display: flex;
   max-width: 100%;
   width: fit-content;
+  margin-inline: auto;
   gap: calc(var(--space-xs) / 2);
   padding: calc(var(--space-xs) / 2);
   border: 1px solid var(--border-default);
@@ -2528,30 +2541,69 @@ ul {
   color: var(--text-muted);
 }
 
-/* Very tall screenshot: scroll inside the frame (click still opens the lightbox) */
-.tabs__frame--scroll {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  border: 0;
-  border-radius: 0;
-  background: var(--warm-0);
+/* Very tall screenshot shown in full flow (no inner scroll), clipped below the
+   last annotated section (2650 of 3778px) so the site footer isn't shown */
+.tabs__clip {
+  aspect-ratio: 461 / 2650;
+  overflow: hidden;
 }
 
-.tabs__frame--scroll img {
+.tabs__clip img {
   display: block;
   width: 100%;
   max-width: none;
   max-height: none;
 }
 
-.tabs__frame--scroll:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+/* Before matches the after column's height; everything scrolls together */
+.tabs__point--shared .tabs__ba {
+  align-items: stretch;
 }
 
-.tabs__hint {
-  font-size: var(--fs-12);
-  color: var(--text-muted);
+.tabs__before {
+  grid-template-rows: 1fr;
+}
+
+.tabs__sticky {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--space-s);
+}
+
+.tabs__before .tabs__frame {
+  height: auto;
+}
+
+/* Points spread down the column alongside the tall screenshot */
+.tabs__point--shared .tabs__group {
+  align-self: stretch;
+  align-content: space-around;
+}
+
+/* Wide screens: each point sits level with its numbered callout on the
+   screenshot (callout centres at these fractions of the column height) */
+@media (min-width: 1100px) {
+  .tabs__point--shared .tabs__group {
+    position: relative;
+    display: block;
+    align-content: start;
+  }
+
+  .tabs__point--shared .tabs__group .tabs__text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+  }
+
+  .tabs__point--shared .tabs__group .tabs__intro {
+    margin-bottom: 0;
+  }
+
+  .tabs__point--shared .tabs__group .tabs__text:nth-of-type(1) { top: 29.7%; }
+  .tabs__point--shared .tabs__group .tabs__text:nth-of-type(2) { top: 43.1%; }
+  .tabs__point--shared .tabs__group .tabs__text:nth-of-type(3) { top: 63.8%; }
+  .tabs__point--shared .tabs__group .tabs__text:nth-of-type(4) { top: 78%; }
 }
 
 /* Card crops are shorter than full phone screens */
@@ -2639,6 +2691,26 @@ ul {
   height: auto;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-m);
+}
+
+/* Phone screenshots: same height on both sides so the phones match in size
+   (the before PNG is wider only because of its annotation strip) */
+.compare--phones figure > img {
+  width: auto;
+  max-width: 100%;
+  height: min(448px, 105vw);
+  object-fit: contain;
+  object-position: left top;
+  border: 0;
+  border-radius: 0;
+}
+
+/* A cropped screen (not a full-height phone): sized so its screen width matches
+   the full phones beside it. 0.45 = 720/1600 phone ratio; × 1150/936 for the
+   crop's total width over its screen width */
+.compare--phones figure > img.is-crop {
+  width: calc(min(448px, 105vw) * 0.5529);
+  height: auto;
 }
 
 .compare figure > p {
