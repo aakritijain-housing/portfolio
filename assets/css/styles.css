@@ -459,6 +459,73 @@ ul {
   border: 1px solid var(--border-subtle);
 }
 
+/* Homepage intro: a short staged entrance on load. Everything ends fully
+   visible; skipped entirely for reduced motion */
+.intro__title .w,
+.intro__wave {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .intro__hello,
+  .intro .tag,
+  .intro__title .w,
+  .intro__skills span,
+  .intro__ctas {
+    animation: intro-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .intro__hello { animation-delay: 0.1s; }
+  .intro .tag { animation-delay: 0.3s; }
+
+  /* Soft serif words drift up one after another */
+  .intro__title .w {
+    animation-name: intro-word;
+    animation-delay: calc(0.5s + var(--i) * 0.08s);
+  }
+
+  /* The bold words land with a small bounce */
+  .intro__title .w--pop {
+    animation-name: intro-pop;
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.3, 1.5, 0.5, 1);
+    animation-delay: calc(1s + var(--i) * 0.12s);
+  }
+
+  .intro__skills span { animation-delay: calc(1.5s + var(--i) * 0.08s); }
+  .intro__ctas { animation-delay: 1.85s; }
+
+  /* The hand waves once the greeting has settled */
+  .intro__wave {
+    transform-origin: 70% 75%;
+    animation: intro-wave 1.4s ease-in-out 0.7s both;
+  }
+}
+
+@keyframes intro-rise {
+  from { opacity: 0; transform: translateY(var(--space-s)); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes intro-word {
+  from { opacity: 0; transform: translateY(0.35em); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes intro-pop {
+  from { opacity: 0; transform: translateY(0.4em) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes intro-wave {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(16deg); }
+  30% { transform: rotate(-8deg); }
+  45% { transform: rotate(14deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(10deg); }
+}
+
 .intro__title {
   max-width: 900px;
   margin-top: var(--space-xl);
@@ -704,6 +771,17 @@ ul {
   object-fit: contain;
 }
 
+/* Desktop + phone composite (hero.png, 1541 × 955), shown whole */
+.hero__visual--wide {
+  aspect-ratio: 1541 / 955;
+}
+
+.hero__visual--wide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .hero__visual img {
   width: 100%;
   height: 100%;
@@ -743,10 +821,46 @@ ul {
     gap: var(--space-5xl);
   }
 
+  /* Wide desktop + phone image: give the visual the larger column (20% wider) */
+  .hero--wide-visual .hero__grid {
+    grid-template-columns: 5fr 6fr;
+  }
+
+  /* Grow the image so its visible right edge (the PNG has a shadow margin:
+     opaque to 1477 of 1541px) meets the container edge like the cage hero,
+     and let it reach half-way into the column gap on the left */
+  .hero--wide-visual .hero__visual--wide {
+    aspect-ratio: auto;
+  }
+
+  .hero--wide-visual .hero__visual--wide img {
+    width: calc((100% + var(--space-5xl) / 2) * 1541 / 1477);
+    max-width: none;
+    height: auto;
+    margin-left: calc(var(--space-5xl) / -2);
+  }
+
   /* Meta stacks label/value in tighter columns on the narrow side */
   .hero--case .meta > div + div {
     padding-left: var(--space-m);
   }
+}
+
+/* Project status: a quiet all-caps line under the stats, with a small dot */
+.hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-l);
+  font-weight: var(--fw-semibold);
+}
+
+.hero__status::before {
+  content: "";
+  width: var(--space-xs);
+  height: var(--space-xs);
+  border-radius: var(--radius-full);
+  background: var(--accent);
 }
 
 /* Pending data marker */
