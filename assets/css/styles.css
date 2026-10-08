@@ -1853,6 +1853,11 @@ ul {
   border-left: 4px solid var(--accent);
 }
 
+/* Takeaway placed directly above a card grid (cage page) */
+.takeaway + .insights {
+  margin-top: var(--space-2xl);
+}
+
 .takeaway .label {
   color: var(--accent);
   font-weight: var(--fw-semibold);
@@ -1904,9 +1909,9 @@ ul {
   gap: var(--space-m);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .challenges {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -1924,7 +1929,6 @@ ul {
    panel with the resolution */
 .challenges {
   gap: var(--space-xl);
-  max-width: 880px;
 }
 
 .challenge {
@@ -1982,8 +1986,8 @@ ul {
   color: var(--text-primary);
 }
 
-@media (min-width: 768px) {
-  /* Top and bottom panels line up across both cards */
+@media (min-width: 900px) {
+  /* Top and bottom panels line up across the row */
   .challenges {
     grid-template-rows: auto auto;
     row-gap: 0;

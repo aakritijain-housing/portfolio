@@ -31,17 +31,6 @@
           <div><span class="tag">Proptech · C2C</span></div>
           <h1 class="hero__title">Developer profile<span class="muted">: making credibility measurable</span></h1>
           <p class="hero__intro">Helping homebuyers look beyond a developer’s name by showing how their completed projects have appreciated over time.</p>
-          <!-- Illustrative metrics: replace with actual numbers -->
-          <div class="stats">
-            <div class="stat">
-              <b><svg class="icon stat__arrow" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,117.66a8,8,0,0,1-11.32,0L136,59.31V216a8,8,0,0,1-16,0V59.31L61.66,117.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0l72,72A8,8,0,0,1,205.66,117.66Z"/></svg>24%</b>
-              <small>Higher engagement with the developer profile</small>
-            </div>
-            <div class="stat">
-              <b><svg class="icon stat__arrow" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,117.66a8,8,0,0,1-11.32,0L136,59.31V216a8,8,0,0,1-16,0V59.31L61.66,117.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0l72,72A8,8,0,0,1,205.66,117.66Z"/></svg>18%</b>
-              <small>Increase in project enquiries from developer profiles</small>
-            </div>
-          </div>
           <dl class="meta hero__meta">
             <div>
               <dt class="label">Role</dt>
@@ -54,6 +43,10 @@
             <div>
               <dt class="label">Company</dt>
               <dd>Housing.com</dd>
+            </div>
+            <div>
+              <dt class="label">Status</dt>
+              <dd>In development</dd>
             </div>
           </dl>
         </div>
@@ -73,6 +66,22 @@
           <p><strong>A homebuyer evaluating a ₹1–3 Cr property may wonder, “What has this developer delivered before, and has it created value over time?”</strong></p>
           <p>A developer’s past performance can be a powerful signal of what buyers can expect from their next project. This experience brings that track record into the buying journey, helping users evaluate projects with greater context and confidence.</p>
         </blockquote>
+      </div>
+    </section>
+
+    <!-- IMG 1: desktop before / after -->
+    <section class="section section--figure">
+      <div class="container">
+        <div class="ba">
+          <figure class="reveal">
+            <figcaption class="label state state--before">Before</figcaption>
+            <img src="../assets/img/developer-profile/desktop-before-1100.png" data-full="../assets/img/developer-profile/desktop-before.png" alt="The old developer page on desktop: a plain search results list with a small developer header and the contact form on the right" width="1100" height="1153" loading="lazy" decoding="async">
+          </figure>
+          <figure class="reveal">
+            <figcaption class="label state state--after">After</figcaption>
+            <img src="../assets/img/developer-profile/desktop-after-1100.png" data-full="../assets/img/developer-profile/desktop-after.png" alt="The redesigned developer profile on desktop: hero with RERA tag and key stats, Projects and Insights tabs, project cards with appreciation, and similar developers on the right" width="1100" height="1743" loading="lazy" decoding="async">
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -111,11 +120,7 @@
             <a class="star__link" href="#result">
               <span class="label">R · Result</span>
               <b>Credibility, backed by data</b>
-              <div class="star__metrics">
-                <span><span class="num">+20%</span> profile engagement</span>
-                <span><span class="num">+15%</span> project exploration</span>
-                <span><span class="num">+10%</span> lead conversion</span>
-              </div>
+              <p>Impact will be measured after launch.</p>
               <svg class="icon star__arrow" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,149.66l-72,72a8,8,0,0,1-11.32,0l-72-72a8,8,0,0,1,11.32-11.32L120,196.69V40a8,8,0,0,1,16,0V196.69l58.34-58.35a8,8,0,0,1,11.32,11.32Z"/></svg>
             </a>
           </li>
@@ -267,8 +272,13 @@
                     <h4>A summary to close</h4>
                     <p>A summary section keeps the developer’s context in view, even after reading everything about them.</p>
                   </div>
+                  <div class="tabs__text">
+                    <span class="story__no">04</span>
+                    <h4>New launches, not everything</h4>
+                    <p>New launches are Housing.com’s highest-converting category, bringing in the most leads. So this section shows only new launches, not resale or other projects.</p>
+                  </div>
                 </div>
-                <!-- One before/after pair covers points 01–03 -->
+                <!-- One before/after pair covers points 01–04 -->
                 <div class="tabs__ba">
                   <figure>
                     <span class="label state state--before">Before</span>
@@ -279,7 +289,7 @@
                   <figure>
                     <span class="label state state--after">After</span>
                     <div class="tabs__frame tabs__frame--scroll" tabindex="0" aria-label="Insights tab screenshot, scrollable">
-                      <img src="../assets/img/developer-profile/insights-after.png" alt="New Insights tab: latest updates at the top, a price appreciation section highlighting the developer's best projects, and a developer summary at the end" width="461" height="3778" loading="lazy" decoding="async">
+                      <img src="../assets/img/developer-profile/insights-after.png" alt="New Insights tab: latest updates at the top, a price appreciation section highlighting the developer's best projects, a developer summary, and a new launches section at the end" width="461" height="3778" loading="lazy" decoding="async">
                     </div>
                     <span class="tabs__hint">Scroll to see the full tab</span>
                   </figure>
@@ -420,10 +430,10 @@
             <article class="challenge reveal">
               <div class="challenge__top">
                 <span class="pill pill--dot">Challenge 01</span>
-                <h4>An assumed buyer</h4>
-                <p class="challenge__problem">Opening on the Projects tab, with no credibility framing, assumes the buyer already trusts the developer.</p>
+                <h4>Projects first, not Insights</h4>
+                <p class="challenge__problem">Insights gives the most complete view of a developer, so it was a strong case for the first tab.</p>
               </div>
-              <p class="challenge__answer">If that’s wrong, the page feels abrupt and buyers leave. A <strong class="num">[x%]</strong> conversion rate showed the bet paid off.</p>
+              <p class="challenge__answer">We still opened on Projects, because viewing property is the core action on Housing.com. Insights is one tap away.</p>
             </article>
             <article class="challenge reveal">
               <div class="challenge__top">
@@ -432,6 +442,14 @@
                 <p class="challenge__problem">Social proof builds trust, but we weren’t confident we had enough data to back it.</p>
               </div>
               <p class="challenge__answer">After stakeholder discussions, we left it out rather than dilute the page’s quality.</p>
+            </article>
+            <article class="challenge reveal">
+              <div class="challenge__top">
+                <span class="pill pill--dot">Challenge 03</span>
+                <h4>One long page, or two tabs</h4>
+                <p class="challenge__problem">Early iterations were a single page. As it grew longer, the projects list lost the focus it needed.</p>
+              </div>
+              <p class="challenge__answer">So I split it into two tabs, keeping Projects centre stage, as in the final design.</p>
             </article>
           </div>
         </div>
@@ -446,52 +464,36 @@
         <span class="tag">The result</span>
         <h2>A developer profile built for better decisions</h2>
         <p>Project history, appreciation data and credibility signals now give buyers a clearer view of a developer’s track record.</p>
-        <p>The result: a more useful, consistent developer experience on Housing.com, which increased user engagement.</p>
+        <p>The result: a more useful, consistent developer experience on Housing.com.</p>
+        <p>Still in development, so impact can’t be measured yet. Results will follow after launch.</p>
       </div>
     </div>
 
+    <!-- REFLECTION -->
     <section class="section">
       <div class="container">
-        <!-- Headline impact (illustrative numbers) -->
-        <div class="headline-impact headline-impact--highlight reveal">
-          <div class="headline-impact__stat">
-            <p class="headline-impact__num">+18<sup>%</sup></p>
-            <p class="headline-impact__label"><mark>more developer profile engagement</mark> at the key step</p>
-            <p class="headline-impact__sub">Plus a +12% lift in project exploration.</p>
+        <div class="head reveal">
+          <span class="tag tag--neutral">Reflection</span>
+          <h2>Proof over promises</h2>
+          <p>Buyers didn’t need more claims about a developer. They needed evidence they could check, without it slowing down their search.</p>
+        </div>
+        <div class="insights">
+          <div class="prob reveal">
+            <span class="prob__no">01</span>
+            <b>Evidence beats reassurance</b>
+            <p>Appreciation data says more than a developer’s own claims, because the platform has nothing to sell.</p>
           </div>
-          <p class="headline-impact__statement">
-            By surfacing <mark>verifiable evidence</mark>, <span class="soft">we turned a list of project cards into a</span> developer profile buyers can trust.
-          </p>
+          <div class="prob reveal">
+            <span class="prob__no">02</span>
+            <b>Leave out what you can’t back</b>
+            <p>Social proof would have built trust, but thin data would have weakened it. Holding it back kept the page credible.</p>
+          </div>
+          <div class="prob reveal">
+            <span class="prob__no">03</span>
+            <b>Keep the core action centre stage</b>
+            <p>Two tabs gave credibility its own space without pushing projects down the page.</p>
+          </div>
         </div>
-
-        <!-- Metrics by area (illustrative numbers) -->
-        <div class="metrics">
-          <article class="metric reveal">
-            <div class="metric__body">
-              <span class="pill pill--dot">01 · Time spent</span>
-              <p class="metric__num">+24%</p>
-              <p class="metric__note">Longer sessions as buyers explored project performance and developer information.</p>
-            </div>
-            <p class="metric__foot">[Time spent on developer profile]</p>
-          </article>
-          <article class="metric reveal">
-            <div class="metric__body">
-              <span class="pill pill--dot">02 · Project exploration</span>
-              <p class="metric__num">+15%</p>
-              <p class="metric__note">More users moving from the developer profile to individual project pages.</p>
-            </div>
-            <p class="metric__foot">[Profile → project PDP CTR]</p>
-          </article>
-          <article class="metric reveal">
-            <div class="metric__body">
-              <span class="pill pill--dot">03 · Lead conversion</span>
-              <p class="metric__num">+10%</p>
-              <p class="metric__note">More enquiries from users who engaged with the developer profile.</p>
-            </div>
-            <p class="metric__foot">[Lead conversion rate]</p>
-          </article>
-        </div>
-
       </div>
     </section>
 
@@ -551,7 +553,7 @@
                 </div>
                 <div class="folder__more">
                   <div>
-                    <h3 class="folder__title">Drove <span class="num">[x%]</span> more clicks by turning a high-converting landing page into a premium product developers pay for.</h3>
+                    <h3 class="folder__title">Turned a high-converting landing page into a premium product developers pay for.</h3>
                   </div>
                 </div>
                 <div class="folder__foot">
@@ -560,8 +562,7 @@
                     <span>weeks</span>
                   </div>
                   <div class="folder__stat folder__stat--end">
-                    <b>[x%]</b>
-                    <span>CTR lift</span>
+                    <b>In development</b>
                   </div>
                 </div>
               </div>
