@@ -2763,7 +2763,8 @@ ul {
 }
 
 /* Text starts level with the top of the before/after column */
-.tabs__point--top .tabs__text {
+.tabs__point--top .tabs__text,
+.tabs__point--top .tabs__group {
   align-self: start;
 }
 
