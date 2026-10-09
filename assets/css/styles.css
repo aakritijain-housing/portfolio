@@ -1408,6 +1408,14 @@ ul {
   margin-top: var(--section-y);
 }
 
+/* Hairline between blocks; sits in the middle of the existing gap above it */
+.divider {
+  height: 0;
+  margin: calc(var(--section-y) / -2) 0 calc(var(--section-y) / 2);
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
 .story__head {
   display: flex;
   flex-wrap: wrap;
@@ -2431,6 +2439,24 @@ ul {
   }
 }
 
+/* A single card beside a tall screenshot: card keeps its natural height,
+   centred against the image; extra space before the next problem row */
+.probs-split.probs-split--single {
+  margin-bottom: var(--space-4xl);
+}
+
+@media (min-width: 1100px) {
+  .probs-split--single .probs.probs--stack {
+    grid-template-rows: auto;
+    align-self: center;
+  }
+
+  /* Same height as the paired cards in the next row */
+  .probs-split--single .prob.prob--split {
+    min-height: 242px;
+  }
+}
+
 /* Solution tabs: a working Projects / Insights switch, each panel an intro
    line followed by numbered points paired with an image */
 .tabs {
@@ -2441,7 +2467,6 @@ ul {
   display: flex;
   max-width: 100%;
   width: fit-content;
-  margin-inline: auto;
   gap: calc(var(--space-xs) / 2);
   padding: calc(var(--space-xs) / 2);
   border: 1px solid var(--border-default);
@@ -2605,8 +2630,19 @@ ul {
   align-content: center;
 }
 
+/* Equal screen widths: each image is sized by its own image-to-screen ratio
+   (--a before, --b after; the rest is annotation margin), so the phone
+   screens match even when the annotations differ. --u is the screen width. */
+.tabs__ba--tall {
+  --u: 170px;
+  grid-template-columns:
+    min(calc(var(--u) * var(--a)), calc((100% - var(--space-xl)) * var(--a) / (var(--a) + var(--b))))
+    min(calc(var(--u) * var(--b)), calc((100% - var(--space-xl)) * var(--b) / (var(--a) + var(--b))));
+}
+
 .tabs__ba--tall img {
-  max-height: min(760px, 160vw);
+  width: 100%;
+  max-height: none;
 }
 
 /* Side by side: point 01 sits level with the top of the images,
@@ -2720,6 +2756,17 @@ ul {
   .tabs__point--shared .tabs__group .tabs__text:nth-of-type(4) { top: 78%; }
 }
 
+/* A numbered point that introduces a block below it (e.g. the tabs) */
+.tabs__text--lead {
+  max-width: var(--measure);
+  margin-bottom: var(--space-3xl);
+}
+
+/* Text starts level with the top of the before/after column */
+.tabs__point--top .tabs__text {
+  align-self: start;
+}
+
 /* Card crops are shorter than full phone screens */
 .tabs__ba--cards img {
   max-height: min(300px, 50vw);
@@ -2729,8 +2776,8 @@ ul {
   display: grid;
   gap: var(--space-xs);
   margin: 0;
-  list-style: decimal;
-  padding-left: var(--space-l);
+  list-style: lower-roman;
+  padding-left: var(--space-xl);
   font-size: var(--text-body);
   line-height: 1.6;
   color: var(--text-secondary);

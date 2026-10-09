@@ -1,13 +1,32 @@
-// On refresh, start at the top: drop any #section hash left from clicking
-// an in-page link (e.g. a STAR card) and skip the browser's scroll restore.
-(function () {
+// On refresh, come back to the same spot: remember the scroll position (and
+// which tab was open) for this page, and restore it once the page has laid out.
+// Any #section hash from an in-page link is dropped so it doesn't win instead.
+var restore = (function () {
+  var key = 'scroll:' + location.pathname;
   var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-  if (!nav || nav.type !== 'reload') return;
+  var isReload = !!nav && nav.type === 'reload';
+  var saved = null;
+
+  try { saved = JSON.parse(sessionStorage.getItem(key)); } catch (e) {}
+
+  window.addEventListener('pagehide', function () {
+    var tabs = {};
+    document.querySelectorAll('[data-tabs] [role="tab"][aria-selected="true"]').forEach(function (t, i) {
+      tabs[i] = t.id;
+    });
+    try { sessionStorage.setItem(key, JSON.stringify({ y: window.scrollY, tabs: tabs })); } catch (e) {}
+  });
+
+  if (!isReload || !saved) return { tab: function () { return null; } };
+
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
-  function top() { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }
-  top();
-  window.addEventListener('load', top);
+
+  function go() { window.scrollTo({ top: saved.y, left: 0, behavior: 'instant' }); }
+  document.addEventListener('DOMContentLoaded', go);
+  window.addEventListener('load', go);
+
+  return { tab: function (i) { return saved.tabs && saved.tabs[i]; } };
 })();
 
 // Fade sections in as they enter the viewport.
@@ -98,7 +117,7 @@
 // Tabs: click or arrow keys switch panels; [data-tab-target] buttons inside a
 // panel jump to another tab. Without JS every panel stays visible.
 (function () {
-  document.querySelectorAll('[data-tabs]').forEach(function (root) {
+  document.querySelectorAll('[data-tabs]').forEach(function (root, n) {
     var tabs = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
 
     function select(tab, focus) {
@@ -111,7 +130,10 @@
       if (focus) tab.focus();
     }
 
-    select(tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0]);
+    // After a refresh, reopen the tab that was showing
+    var savedTab = document.getElementById(restore.tab(n));
+    select((savedTab && tabs.indexOf(savedTab) > -1 && savedTab) ||
+      tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0]);
 
     tabs.forEach(function (tab, i) {
       tab.addEventListener('click', function () { select(tab); });
