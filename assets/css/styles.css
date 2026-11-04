@@ -30,6 +30,8 @@
   --lavender-200: #d6bce4;
   --lavender-500: #6b3d97;
   --butter-500: #8c6900;
+  --pistachio-500: #5e7d24;
+  --green-500: #43945c;
   --lavender-300: #b58ad2;
   --purple-700: #4a16d9;
 
@@ -160,6 +162,16 @@ body {
   font-weight: var(--fw-regular);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Headings balance their lines. Widows in running text are prevented in
+   main.js, which joins the last two words of each block */
+h1,
+h2,
+h3,
+h4,
+b {
+  text-wrap: balance;
 }
 
 img {
@@ -771,6 +783,97 @@ ul {
   object-fit: contain;
 }
 
+/* Cross-border hero: two phones in dark device frames (like the other case
+   study heroes), the India home with the hook and the Dubai home it opens,
+   joined by a dashed '1 tap' arc. Everything is placed in % of the box. */
+.hero__visual.duo {
+  position: relative;
+  aspect-ratio: 1 / 1.2;
+}
+
+/* Thin bezel like the other heroes: ~2% of the phone's own width (padding %
+   resolves against the hero box, so 0.95% of it) */
+.duo__phone {
+  position: absolute;
+  width: 47%;
+  padding: 0.95%;
+  border-radius: 9% / 4.2%;
+  background: var(--warm-900);
+  box-shadow: 0 var(--space-xl) var(--space-4xl) calc(var(--space-xl) * -1)
+    color-mix(in srgb, var(--grey-900) 45%, transparent);
+}
+
+.duo__phone--from {
+  left: 0;
+  top: 13%;
+}
+
+.duo__phone--to {
+  right: 0;
+  top: 0;
+}
+
+.duo__screen {
+  overflow: hidden;
+  aspect-ratio: 360 / 800;
+  border-radius: 7.5% / 3.4%;
+  background: var(--warm-0);
+}
+
+.hero__visual.duo .duo__screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* Arc from the hook card (left phone) to the Dubai screen (right phone) */
+.duo__arc {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.duo__arc path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+  stroke-linecap: round;
+}
+
+.duo__dot {
+  position: absolute;
+  left: 45.5%;
+  top: 86%;
+  width: var(--space-s);
+  height: var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  translate: -50% -50%;
+}
+
+.duo__tap {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  translate: -50% -50%;
+  padding: var(--space-xs) var(--space-m);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: var(--warm-0);
+  box-shadow: 0 var(--space-xs) var(--space-l) calc(var(--space-xs) * -1)
+    color-mix(in srgb, var(--grey-900) 35%, transparent);
+}
+
 /* Desktop + phone composite (hero.png, 1541 × 955), shown whole */
 .hero__visual--wide {
   aspect-ratio: 1541 / 955;
@@ -904,6 +1007,19 @@ ul {
   gap: var(--space-2xl);
 }
 
+/* Three case studies in one row on wide screens (below this the cards wrap,
+   two to a row, so titles and footers have room) */
+@media (min-width: 1200px) {
+  .work__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .work__grid .folder {
+    max-width: none;
+  }
+}
+
 .folder {
   --tab-h: var(--space-xl);
   --tab-w: 58%;
@@ -955,6 +1071,10 @@ ul {
   --media-bg: var(--lavender-500);
 }
 
+.folder--pistachio .folder__media {
+  --media-bg: var(--pistachio-500);
+}
+
 .folder__ph {
   position: absolute;
   inset: 0;
@@ -992,8 +1112,51 @@ ul {
   object-fit: initial;
 }
 
+/* Two plain phone screenshots in thin dark frames, top-aligned, with even
+   padding on the top and sides (cross-border card) */
+.folder__duo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6%;
+  height: 100%;
+  /* Start the phones where the devices in the other two covers start */
+  padding: 8% 0 0;
+}
+
+.folder__phone {
+  flex: 0 0 42%;
+  padding: 1%;
+  border-radius: 9% / 4.2%;
+  background: var(--warm-900);
+  box-shadow: 0 var(--space-m) var(--space-2xl) calc(var(--space-m) * -1)
+    color-mix(in srgb, var(--grey-900) 50%, transparent);
+}
+
+.folder__media .folder__phone img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 360 / 800;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 7.5% / 3.4%;
+}
+
 .folder:hover .folder__media img {
   transform: scale(1.04);
+}
+
+/* Framed phones zoom as a whole, so the screen never slides past its bezel */
+.folder__phone {
+  transition: transform 0.6s ease;
+}
+
+.folder:hover .folder__phone {
+  transform: scale(1.04);
+}
+
+.folder:hover .folder__media .folder__phone img {
+  transform: none;
 }
 
 /* Bottom panel, anchored to the bottom so it grows upward */
@@ -1037,8 +1200,12 @@ ul {
   border-bottom: 1px solid var(--border-default);
 }
 
+/* The first line sits on the tab. main.js widens the tab to fit the title
+   (--tab-w) and sets --title-max so a title too long for any tab wraps
+   onto the panel instead of running over the image. */
 .folder__head b {
   display: block;
+  max-width: var(--title-max, none);
   font-size: var(--fs-18);
   font-weight: var(--fw-semibold);
   line-height: 1.3;
@@ -1414,6 +1581,11 @@ ul {
   margin: calc(var(--section-y) / -2) 0 calc(var(--section-y) / 2);
   border: 0;
   border-top: 1px solid var(--border-subtle);
+}
+
+/* Between two blocks with no gap of their own: half a section above and below */
+.divider.divider--gap {
+  margin: calc(var(--section-y) / 2) 0;
 }
 
 .story__head {
@@ -2049,6 +2221,13 @@ ul {
   }
 }
 
+/* Two challenges: two columns, so the row doesn't end in an empty slot */
+@media (min-width: 900px) {
+  .challenges:has(> .challenge:nth-child(2):last-child) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (min-width: 900px) {
   .insights {
     grid-template-columns: repeat(3, 1fr);
@@ -2169,6 +2348,12 @@ ul {
 .shot img {
   width: 100%;
   height: auto;
+}
+
+/* Screenshots with a white edge: a light border so they don't melt into the page */
+.shot img.shot__framed {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-l);
 }
 
 /* Small source files: show at native size at most, centred */
@@ -3325,6 +3510,853 @@ ul {
 }
 
 /* --------------------------------------------------------------------------
+   Cross-border discovery
+   -------------------------------------------------------------------------- */
+
+/* Who it's for: primary and secondary audience side by side */
+.audience {
+  display: grid;
+  gap: var(--space-m);
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .audience {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.audience.audience--context {
+  max-width: none;
+  margin-top: var(--space-3xl);
+}
+
+/* Context that leads into full-width cards: a wider measure, fewer lines */
+.context.context--wide {
+  max-width: 960px;
+}
+
+.audience .prob > .prob__no {
+  justify-self: start;
+}
+
+/* Image placeholders in a figure */
+.shot__ph {
+  aspect-ratio: 16 / 9;
+  padding: var(--space-m);
+  text-align: center;
+}
+
+/* Yield comparison: each bar spans its min–max range on a 0–8% scale */
+.yields {
+  --scale: 8;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.yields__list {
+  display: grid;
+  gap: var(--space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.yields__row,
+.yields__axis {
+  display: grid;
+  grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) 6rem;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.yields__city {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
+}
+
+.yields__track {
+  position: relative;
+  height: var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--warm-100);
+}
+
+.yields__bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--lo) / var(--scale) * 100%);
+  width: calc((var(--hi) - var(--lo)) / var(--scale) * 100%);
+  border-radius: var(--radius-full);
+  background: var(--warm-300);
+}
+
+.yields__value {
+  font-family: var(--font-accent);
+  font-size: var(--fs-20);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--text-muted);
+}
+
+.yields__row--uae .yields__city {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+.yields__row--uae .yields__bar {
+  background: var(--accent);
+}
+
+.yields__row--uae .yields__value {
+  color: var(--accent);
+}
+
+.yields__axis {
+  margin-top: var(--space-s);
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+}
+
+.yields__ticks {
+  position: relative;
+  height: 1.2em;
+}
+
+.yields__ticks > span {
+  position: absolute;
+  left: calc(var(--v) / var(--scale) * 100%);
+  transform: translateX(-50%);
+}
+
+@media (max-width: 599px) {
+  .yields__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--space-xs);
+  }
+
+  .yields__track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .yields__axis {
+    display: none;
+  }
+}
+
+/* Surface cards: screenshot on top, then rule and description */
+.surface .ph.surface__ph {
+  aspect-ratio: 4 / 3;
+  margin-bottom: var(--space-s);
+  padding: var(--space-m);
+  text-align: center;
+}
+
+.surface .pill {
+  justify-self: start;
+}
+
+/* Phone screenshots in surface cards are shown whole, at the same width as
+   the Home page shots; the placeholders use a matching phone-shaped frame */
+.surface .surface__img {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  /* Same phone shape as the other cards: longer screens are trimmed at the
+     bottom so the labels below line up across the row */
+  aspect-ratio: 360 / 800;
+  object-fit: cover;
+  object-position: top;
+  margin-bottom: var(--space-s);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-l);
+}
+
+/* When the hook sits low on the screen, trim from the top instead */
+.surface .surface__img.surface__img--bottom {
+  object-position: bottom;
+}
+
+.surfaces .insights .ph.surface__ph {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 360 / 800;
+}
+
+/* Small aside under a lede: icon, muted text */
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  max-width: var(--measure);
+  margin: calc(var(--space-3xl) * -1 + var(--space-s)) 0 var(--space-3xl);
+  font-size: var(--fs-14);
+  line-height: 1.5;
+  text-align: left;
+  color: var(--text-muted);
+}
+
+.note > span {
+  flex: 1;
+  min-width: 0;
+}
+
+.note .icon {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: 0.1em;
+}
+
+.note b {
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+}
+
+/* Surfaces: Home gets a wide card with its two versions; the rest sit in a row */
+.surfaces {
+  display: grid;
+  gap: var(--space-m);
+}
+
+.surface--home {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+@media (min-width: 900px) {
+  .surface--home {
+    grid-template-columns: 4fr 7fr;
+    align-items: start;
+    gap: var(--space-4xl);
+  }
+}
+
+.surface__intro {
+  display: grid;
+  gap: var(--space-xs);
+  justify-items: start;
+}
+
+.surface__cues {
+  display: grid;
+  gap: var(--space-s);
+  margin: var(--space-xs) 0 0;
+  padding-left: var(--space-xl);
+  list-style: lower-roman;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.surface__cues li {
+  display: list-item;
+  padding-left: calc(var(--space-xs) / 2);
+}
+
+.surface__cues li::marker {
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+}
+
+.surface__cues b {
+  font-size: inherit;
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+.surface__shots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-xl);
+}
+
+.surface__shots figure {
+  display: grid;
+  gap: var(--space-m);
+  align-content: start;
+}
+
+.surface__shots .ph.surface__ph {
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 360 / 800;
+  margin-bottom: 0;
+}
+
+/* Numbered callouts on a screenshot: a fixed-size green badge on a pointer
+   line running from the element (--x, --y on the image) out past its right
+   edge. Badge size stays the same on every image. */
+.callouts {
+  /* Room for the badge is reserved on the right, so it never overlaps the
+     next image or pushes past the page edge */
+  --badge: calc(var(--space-xl) + var(--space-xs) / 2);
+  --reach: calc(var(--badge) + var(--space-m));
+  position: relative;
+  width: 100%;
+  max-width: calc(260px + var(--reach));
+  padding-right: var(--reach);
+}
+
+.callouts > img {
+  max-width: none;
+}
+
+/* Search / SRP cards: a narrower phone, so a narrower box */
+.callouts.callouts--surface {
+  max-width: calc(220px + var(--reach));
+  margin-bottom: var(--space-s);
+}
+
+.callouts--surface > .surface__img {
+  max-width: none;
+  margin-bottom: 0;
+}
+
+.callout {
+  position: absolute;
+  top: var(--y);
+  /* --x is a percentage of the image width (the box minus the reserved room) */
+  left: calc((100% - var(--reach)) * var(--x) / 100);
+  /* The badge sits fully outside the image with a fixed gap, so every
+     callout keeps a visible line even when the element is near the edge */
+  right: 0;
+  display: flex;
+  align-items: center;
+  height: var(--badge);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.callout::before {
+  content: "";
+  flex: 1;
+  min-width: var(--space-m);
+  height: 2px;
+  background: var(--green-500);
+}
+
+.callout__no {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--badge);
+  height: var(--badge);
+  white-space: nowrap;
+  border-radius: var(--radius-full);
+  background: var(--green-500);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  color: var(--warm-0);
+}
+
+.callout__no::after {
+  content: ".";
+}
+
+.surface__cues--numbered {
+  list-style: decimal;
+}
+
+.surface__cues--numbered li::marker {
+  color: var(--green-500);
+}
+
+.surface__shots img {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-l);
+}
+
+.surface__shots figcaption {
+  display: grid;
+  gap: calc(var(--space-xs) / 2);
+}
+
+.surface__shots figcaption b {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+.surface__shots figcaption span {
+  font-size: var(--fs-14);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Two surfaces side by side: text on the left, screen on the right, matching
+   the Home page card above */
+@media (min-width: 900px) {
+  .surfaces .insights.surfaces__pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .surfaces__pair .surface {
+    grid-template-columns: minmax(0, 1fr) calc(220px + var(--space-xl) + var(--space-xs) / 2 + var(--space-m));
+    grid-template-rows: auto auto 1fr;
+    column-gap: var(--space-2xl);
+    align-items: start;
+  }
+
+  .surfaces__pair .surface > * {
+    grid-column: 1;
+  }
+
+  .surfaces__pair .surface .surface__img,
+  .surfaces__pair .surface .callouts--surface {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    margin-bottom: 0;
+  }
+
+  .surfaces__pair .surface > .pill {
+    margin-top: var(--space-xs);
+  }
+}
+
+/* A surface that was considered and dropped: dashed, quieter */
+.prob.prob--dropped {
+  border-style: dashed;
+  background: transparent;
+}
+
+.prob--dropped b {
+  color: var(--text-muted);
+}
+
+.insights .prob--dropped > .prob__no {
+  border-color: var(--border-default);
+  background: var(--surface-default);
+  color: var(--text-muted);
+}
+
+/* Hook anatomy: the shared pattern beside its two key elements */
+.anatomy {
+  display: grid;
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .anatomy {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--space-4xl);
+  }
+}
+
+.anatomy__shot img {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  padding: var(--space-l);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-subtle);
+}
+
+.anatomy__points {
+  display: grid;
+  gap: var(--space-2xl);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.anatomy__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.anatomy__points b {
+  display: block;
+  font-size: var(--fs-20);
+  font-weight: var(--fw-semibold);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.anatomy__points p {
+  margin-top: var(--space-xs);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* Iteration deck: one card at a time, the next two peeking behind it.
+   Click the card or the arrows to move through; the last is the final. */
+.flip {
+  display: grid;
+  gap: var(--space-2xl);
+  align-items: center;
+  margin-bottom: var(--space-3xl);
+}
+
+@media (min-width: 900px) {
+  .flip {
+    grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+    gap: var(--space-4xl);
+  }
+}
+
+.flip__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 360px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-subtle);
+  cursor: pointer;
+}
+
+.flip__stage:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.flip__card {
+  grid-area: 1 / 1;
+  /* Both auto so the limits scale each card proportionally: no skewing,
+     whatever its ratio */
+  width: auto;
+  height: auto;
+  max-width: min(340px, 80%);
+  max-height: 280px;
+  object-fit: contain;
+  opacity: 0;
+  transform: translateX(var(--space-4xl)) scale(0.9);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
+  pointer-events: none;
+}
+
+/* Before the script runs (or if it never does), show the first card */
+.flip:not(.is-ready) .flip__card:first-child {
+  opacity: 1;
+  transform: none;
+}
+
+.flip__card.is-current {
+  z-index: 3;
+  opacity: 1;
+  transform: none;
+}
+
+.flip__card.is-next {
+  z-index: 2;
+  opacity: 0.45;
+  transform: translate(var(--space-l), calc(var(--space-s) * -1)) scale(0.94);
+}
+
+.flip__card.is-next2 {
+  z-index: 1;
+  opacity: 0.2;
+  transform: translate(var(--space-3xl), calc(var(--space-l) * -1)) scale(0.88);
+}
+
+.flip__card.is-past {
+  opacity: 0;
+  transform: translateX(calc(var(--space-4xl) * -1)) scale(0.96);
+}
+
+/* Scene variant: the iterations sit over a homepage screenshot, just below
+   the 'Invest beyond India' strip they open from. One card at a time. */
+@media (min-width: 900px) {
+  .flip.flip--scene {
+    grid-template-columns: minmax(0, 720px) minmax(0, 1fr);
+  }
+}
+
+.flip--scene .flip__stage {
+  height: auto;
+  aspect-ratio: 1456 / 884;
+  border: 0;
+  /* Zoomed to 150% from the top left, so the navbar and hero fill the frame */
+  background: var(--surface-subtle) url("../img/Intnl-Inventory/P1.png") 0 0 / 150% auto no-repeat;
+}
+
+/* Each popup hangs from the 'All India' dropdown in the navbar: its pointer
+   (--px across, --py down, measured per image) sits right under the label.
+   Popups keep their true size on the page: --w is the 1x width in px on a
+   1440px screen, and the screen is shown at 150% (1.5 / 1440 = 0.1042%) */
+.flip--scene .flip__stage > .flip__card {
+  position: absolute;
+  top: 8.5%;
+  left: 23.7%;
+  width: calc(var(--w, 300) * 0.1042%);
+  max-width: none;
+  max-height: none;
+  height: auto;
+  translate: calc(var(--px, 50%) * -1) calc(var(--py, 0%) * -1);
+  filter: drop-shadow(0 var(--space-s) var(--space-l) color-mix(in srgb, var(--grey-900) 30%, transparent));
+}
+
+.flip--scene .flip__card.is-next,
+.flip--scene .flip__card.is-next2 {
+  opacity: 0;
+  transform: translateX(var(--space-xl)) scale(0.96);
+}
+
+.flip--scene .flip__card.is-past {
+  transform: translateX(calc(var(--space-xl) * -1)) scale(0.96);
+}
+
+.flip__meta {
+  display: grid;
+  gap: var(--space-s);
+  justify-items: start;
+}
+
+.flip__meta .label {
+  color: var(--accent);
+  font-weight: var(--fw-semibold);
+}
+
+.flip__count {
+  font-family: var(--font-accent);
+  font-size: var(--fs-24);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.flip__count b {
+  font-size: var(--fs-56);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.flip__status {
+  font-size: var(--text-body);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+}
+
+.flip__status.is-final {
+  color: var(--accent);
+}
+
+.flip__dots {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.flip__dot {
+  width: var(--space-xs);
+  height: var(--space-xs);
+  border-radius: var(--radius-full);
+  background: var(--border-default);
+  transition: background-color 0.2s ease, width 0.2s ease;
+}
+
+.flip__dot.is-on {
+  background: var(--text-primary);
+}
+
+.flip__dot.is-current {
+  width: var(--space-xl);
+  background: var(--text-primary);
+}
+
+.flip__dot--final.is-current {
+  background: var(--accent);
+}
+
+.flip__nav {
+  display: flex;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.flip__btn {
+  display: grid;
+  place-items: center;
+  width: var(--space-4xl);
+  height: var(--space-4xl);
+  padding: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--warm-0);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.flip__btn:hover {
+  border-color: var(--text-primary);
+}
+
+.flip__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  border-color: var(--border-default);
+}
+
+.flip__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.flip__btn .icon {
+  width: var(--space-l);
+  height: var(--space-l);
+}
+
+.flip__hint {
+  font-size: var(--fs-14);
+  color: var(--text-muted);
+}
+
+@media (max-width: 599px) {
+  .flip__stage {
+    height: 260px;
+  }
+
+  .flip__card {
+    max-height: 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip__card {
+    transition: none;
+  }
+}
+
+/* Full-screen iteration strips: screens side by side, numbered, each opens
+   full size. On narrow screens the row scrolls sideways */
+.strips {
+  display: grid;
+  gap: var(--space-3xl);
+}
+
+.strip {
+  display: grid;
+  gap: var(--space-m);
+}
+
+.strip__label {
+  color: var(--accent);
+  font-weight: var(--fw-semibold);
+}
+
+.strip__row {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--space-m);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+  scrollbar-width: thin;
+}
+
+.strip__row--mobile {
+  grid-auto-columns: minmax(140px, 1fr);
+}
+
+.strip__row--desktop {
+  grid-auto-columns: minmax(240px, 1fr);
+}
+
+/* Wide screens: every screen in the row fits without scrolling */
+@media (min-width: 1100px) {
+  .strip__row--mobile,
+  .strip__row--desktop {
+    grid-auto-columns: minmax(0, 1fr);
+    overflow-x: visible;
+  }
+}
+
+.strip__item {
+  display: grid;
+  gap: var(--space-xs);
+  align-content: start;
+}
+
+.strip__item img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-m);
+}
+
+.strip__item figcaption {
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* SRP variant grid */
+.variants {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+@media (min-width: 600px) {
+  .variants {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .variants {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.variant {
+  display: grid;
+  gap: var(--space-s);
+  align-content: start;
+}
+
+.variant .ph.variant__ph {
+  aspect-ratio: 4 / 3;
+  padding: var(--space-m);
+  text-align: center;
+}
+
+.variant figcaption {
+  display: grid;
+  gap: calc(var(--space-xs) / 2);
+}
+
+.variant figcaption b {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+.variant figcaption span {
+  font-size: var(--fs-14);
+  color: var(--text-muted);
+}
+
+.variant--rejected .ph.variant__ph {
+  border-style: dashed;
+  border-color: var(--border-default);
+  background: transparent;
+}
+
+.variant--rejected figcaption b {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
    Up next / contact
    -------------------------------------------------------------------------- */
 
@@ -3516,6 +4548,17 @@ a.upnext__card:hover {
   height: calc(100vh - 2 * var(--space-4xl));
   height: calc(100dvh - 2 * var(--space-4xl));
   object-fit: contain;
+}
+
+.lightbox--fit-height .lightbox__img {
+  cursor: zoom-in;
+}
+
+/* Zoomed phone screen: wider, scroll the overlay to read it */
+.lightbox--fit-height.lightbox--zoomed .lightbox__img {
+  width: min(100%, 760px);
+  height: auto;
+  cursor: zoom-out;
 }
 
 .lightbox.is-open .lightbox__img {

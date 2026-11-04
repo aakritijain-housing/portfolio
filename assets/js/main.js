@@ -52,7 +52,7 @@ var restore = (function () {
 (function () {
   var images = Array.prototype.filter.call(
     document.querySelectorAll('main img'),
-    function (img) { return !img.closest('a'); }
+    function (img) { return !img.closest('a, [data-flip]'); }
   );
   if (!images.length) return;
 
@@ -70,15 +70,30 @@ var restore = (function () {
   var big = box.querySelector('.lightbox__img');
   var closeBtn = box.querySelector('.lightbox__close');
   var opener = null;
+  var fitMax = '';
+
+  // Fitted phone screens: click to zoom in (scroll to read), click again to fit
+  big.addEventListener('click', function () {
+    if (!box.classList.contains('lightbox--fit-height')) return;
+    var zoomed = box.classList.toggle('lightbox--zoomed');
+    big.style.maxHeight = zoomed ? '' : fitMax;
+    box.scrollTop = 0;
+  });
 
   function open(img) {
     opener = img;
     big.src = img.getAttribute('data-full') || img.currentSrc || img.src;
     big.alt = img.alt;
-    // Phone screenshots fit the screen height instead of filling the width
-    box.classList.toggle('lightbox--fit-height', !!img.closest('[data-fit="height"], .tabs__ba, .hero__phones'));
+    // Phone screenshots open fitted to the screen height so the whole screen
+    // is visible; clicking the image zooms in. A phone shot = a narrow,
+    // portrait image; very long page captures (over 4:1) still scroll at width
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var portrait = w > 0 && w <= 1080 && h > w * 1.2 && h < w * 4;
+    box.classList.toggle('lightbox--fit-height', portrait || !!img.closest('[data-fit="height"], .tabs__ba, .hero__phones'));
+    box.classList.remove('lightbox--zoomed');
     // ...but small crops are not blown up beyond 1.5x their real size
-    big.style.maxHeight = img.naturalHeight ? img.naturalHeight * 1.5 + 'px' : '';
+    fitMax = img.naturalHeight ? img.naturalHeight * 1.5 + 'px' : '';
+    big.style.maxHeight = fitMax;
     box.scrollTop = 0;
     box.hidden = false;
     document.documentElement.classList.add('lightbox-open');
@@ -153,5 +168,164 @@ var restore = (function () {
         root.scrollIntoView({ block: 'start' });
       });
     });
+  });
+})();
+
+// No widows: join the last two words of every text block with a non-breaking
+// space, so a single word never sits alone on the last line.
+(function () {
+  var blocks = document.querySelectorAll(
+    'main p, main h1, main h2, main h3, main h4, main li, main dd, main dt, ' +
+    'main small, main figcaption, main b, main blockquote'
+  );
+  blocks.forEach(function (el) {
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    var nodes = [];
+    var n;
+    while ((n = walker.nextNode())) {
+      if (n.data.trim()) nodes.push(n);
+    }
+    // Walk back from the end to the last space between two words
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var t = nodes[i].data.replace(/\s+$/, '');
+      var k = t.lastIndexOf(' ');
+      if (k > 0 && /\S/.test(t.slice(0, k))) {
+        nodes[i].data = t.slice(0, k) + '\u00a0' + t.slice(k + 1) + nodes[i].data.slice(t.length);
+        return;
+      }
+      if (k === 0) {
+        // The node starts with a space: the break sits before it
+        nodes[i].data = '\u00a0' + nodes[i].data.slice(1);
+        return;
+      }
+    }
+  });
+})();
+
+// Folder cards: the title's first line sits on the tab, so size the tab to the
+// title (at least the default 58%), leaving room for the curve on the right.
+// A title too long even for that wraps onto the panel below.
+(function () {
+  var cards = document.querySelectorAll('.folder');
+  if (!cards.length) return;
+
+  function fit() {
+    cards.forEach(function (card) {
+      var body = card.querySelector('.folder__body');
+      var title = card.querySelector('.folder__head b');
+      var curve = card.querySelector('.folder__curve');
+      if (!body || !title) return;
+      card.style.removeProperty('--tab-w');
+      card.style.removeProperty('--title-max');
+
+      var pad = parseFloat(getComputedStyle(body).paddingLeft);
+      var gap = pad / 2;
+      var bodyW = body.getBoundingClientRect().width;
+      var maxTab = bodyW - (curve ? curve.getBoundingClientRect().width : 0) - pad;
+
+      // Measure the text itself, not the block it sits in
+      title.style.whiteSpace = 'nowrap';
+      title.style.display = 'inline-block';
+      var textW = title.getBoundingClientRect().width;
+      title.style.whiteSpace = '';
+      title.style.display = '';
+
+      // The tab hugs the title: padding + text + a small gap, never past the card
+      var tab = Math.min(pad + textW + gap, maxTab);
+      card.style.setProperty('--tab-w', tab + 'px');
+      card.style.setProperty('--title-max', (tab - pad - gap) + 'px');
+    });
+  }
+
+  fit();
+  window.addEventListener('load', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  if ('ResizeObserver' in window) {
+    var ro = new ResizeObserver(fit);
+    cards.forEach(function (c) { ro.observe(c); });
+  } else {
+    window.addEventListener('resize', fit);
+  }
+})();
+
+// Iteration deck: click the card (or Enter/Space, or the arrow buttons) to
+// bring the next iteration forward. After the final one it starts over.
+(function () {
+  document.querySelectorAll('[data-flip]').forEach(function (root) {
+    var stage = root.querySelector('.flip__stage');
+    var cards = Array.prototype.slice.call(root.querySelectorAll('.flip__card'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('.flip__dot'));
+    var num = root.querySelector('[data-flip-current]');
+    var status = root.querySelector('[data-flip-status]');
+    var prev = root.querySelector('[data-flip-prev]');
+    var next = root.querySelector('[data-flip-next]');
+    var last = cards.length - 1;
+    // The card marked data-final is the design taken forward (defaults to the last)
+    var fin = cards.findIndex(function (c) { return c.hasAttribute('data-final'); });
+    if (fin < 0) fin = last;
+    var i = 0;
+
+    function render() {
+      cards.forEach(function (c, k) {
+        c.classList.toggle('is-current', k === i);
+        c.classList.toggle('is-next', k === i + 1);
+        c.classList.toggle('is-next2', k === i + 2);
+        c.classList.toggle('is-past', k < i);
+      });
+      dots.forEach(function (d, k) {
+        d.classList.toggle('is-on', k < i);
+        d.classList.toggle('is-current', k === i);
+      });
+      num.textContent = String(i + 1).padStart(2, '0');
+      status.textContent = i === fin ? 'Final: taken forward' : 'Iteration';
+      status.classList.toggle('is-final', i === fin);
+      prev.disabled = i === 0;
+      stage.setAttribute('aria-label', i === last ? 'Start again from the first card' : 'Show the next iteration');
+    }
+
+    function go(step) {
+      i = i + step > last ? 0 : Math.max(0, i + step);
+      render();
+    }
+
+    // Autoplay: steps through on its own while the deck is on screen, holds a
+    // little longer on the final card, pauses on hover or focus, and stops for
+    // good once someone takes over. Off for reduced motion.
+    var STEP = 1500, HOLD_FINAL = 3000;
+    var timer = null, visible = false, paused = false, stopped = false;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function schedule() {
+      clearTimeout(timer);
+      if (stopped || reduce || !visible || paused) return;
+      timer = setTimeout(function () { go(1); schedule(); }, i === fin ? HOLD_FINAL : STEP);
+    }
+
+    function takeOver() {
+      stopped = true;
+      clearTimeout(timer);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        schedule();
+      }, { threshold: 0.5 }).observe(stage);
+    }
+    root.addEventListener('mouseenter', function () { paused = true; schedule(); });
+    root.addEventListener('mouseleave', function () { paused = false; schedule(); });
+    root.addEventListener('focusin', function () { paused = true; schedule(); });
+    root.addEventListener('focusout', function () { paused = false; schedule(); });
+
+    root.classList.add('is-ready');
+    stage.addEventListener('click', function () { takeOver(); go(1); });
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); takeOver(); go(1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); takeOver(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); takeOver(); go(-1); }
+    });
+    prev.addEventListener('click', function () { takeOver(); go(-1); });
+    next.addEventListener('click', function () { takeOver(); go(1); });
+    render();
   });
 })();
