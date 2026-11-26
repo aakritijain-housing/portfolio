@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="ArrowsDownUp">
+<g id="Vector">
+</g>
+<path id="Vector_2" d="M7 11L5 13L3 11" stroke-linecap="round" stroke-linejoin="round" stroke="#444444"/>
+<path id="Vector_3" d="M5 3V13" stroke-linecap="round" stroke-linejoin="round" stroke="#444444"/>
+<path id="Vector_4" d="M9 5L11 3L13 5" stroke-linecap="round" stroke-linejoin="round" stroke="#444444"/>
+<path id="Vector_5" d="M11 13V3" stroke-linecap="round" stroke-linejoin="round" stroke="#444444"/>
+</g>
+</svg>

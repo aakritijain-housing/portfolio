@@ -118,10 +118,33 @@
   /* Layout — composed only from spacing tokens */
   --gutter: var(--space-m);
   --container: 1120px;
-  --measure: 760px;
+  --measure: 860px;
   --section-y: calc(var(--space-5xl) + var(--space-4xl));     /* 112 */
   --chapter-y: calc(var(--space-5xl) * 2);                     /* 128 */
   --hero-top: calc(var(--space-5xl) * 2 + var(--space-3xl));   /* 168 */
+
+  /* Housing.com app UI, only for screens rebuilt in code (Figma values) */
+  --app-brand: #5e23dc;
+  --app-brand-text: #4a16d9;
+  --app-brand-tint: #f8f5ff;
+  --app-brand-mist: #f6f1f8;
+  --app-ink: #222222;
+  --app-ink-2: #434343;
+  --app-ink-3: #656565;
+  --app-ink-4: #767676;
+  --app-ink-5: #444444;
+  --app-ink-sys: #1d1b20;
+  --app-ink-snack: #0f0e0d;
+  --app-white: #ffffff;
+  --app-bg: #f2f3f8;
+  --app-stroke: #e1e2e8;
+  --app-stroke-2: #edebdf;
+  --app-stroke-3: #e8e8e8;
+  --app-shadow-chip: #f1f1f1;
+  --app-overlay: rgba(0, 0, 0, 0.8);
+  --app-overlay-text: rgba(255, 255, 255, 0.8);
+  --app-shadow-1: rgba(0, 0, 0, 0.07);
+  --app-shadow-2: rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -164,14 +187,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings balance their lines. Widows in running text are prevented in
-   main.js, which joins the last two words of each block */
+/* Headings balance their lines. Widows everywhere are prevented in main.js,
+   which wraps the last two words of each text block in .nowrap */
 h1,
 h2,
 h3,
 h4,
 b {
   text-wrap: balance;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Ordinal markers inside a title (i., ii., 01, A…) always use the accent,
+   like .story__no, .prob__no and the STAR labels */
+.ord {
+  color: var(--accent);
 }
 
 img {
@@ -482,7 +515,7 @@ ul {
   .intro__hello,
   .intro .tag,
   .intro__title .w,
-  .intro__skills span,
+  .intro__skills > span,
   .intro__ctas {
     animation: intro-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
@@ -504,7 +537,7 @@ ul {
     animation-delay: calc(1s + var(--i) * 0.12s);
   }
 
-  .intro__skills span { animation-delay: calc(1.5s + var(--i) * 0.08s); }
+  .intro__skills > span { animation-delay: calc(1.5s + var(--i) * 0.08s); }
   .intro__ctas { animation-delay: 1.85s; }
 
   /* The hand waves once the greeting has settled */
@@ -576,7 +609,7 @@ ul {
     column-gap: var(--space-s);
   }
 
-  .intro__skills span + span::before {
+  .intro__skills > span + span::before {
     content: "•";
     margin-right: var(--space-s);
     color: var(--border-default);
@@ -788,14 +821,14 @@ ul {
    joined by a dashed '1 tap' arc. Everything is placed in % of the box. */
 .hero__visual.duo {
   position: relative;
-  aspect-ratio: 1 / 1.2;
+  aspect-ratio: 1 / 1.146;
 }
 
 /* Thin bezel like the other heroes: ~2% of the phone's own width (padding %
    resolves against the hero box, so 0.95% of it) */
 .duo__phone {
   position: absolute;
-  width: 47%;
+  width: 44%;
   padding: 0.95%;
   border-radius: 9% / 4.2%;
   background: var(--warm-900);
@@ -847,8 +880,8 @@ ul {
 
 .duo__dot {
   position: absolute;
-  left: 45.5%;
-  top: 86%;
+  left: 42.6%;
+  top: 84.6%;
   width: var(--space-s);
   height: var(--space-s);
   border-radius: var(--radius-full);
@@ -859,7 +892,7 @@ ul {
 .duo__tap {
   position: absolute;
   left: 50%;
-  top: 56%;
+  top: 55%;
   translate: -50% -50%;
   padding: var(--space-xs) var(--space-m);
   border-radius: var(--radius-full);
@@ -1212,7 +1245,7 @@ ul {
   letter-spacing: -0.02em;
 }
 
-.folder__head span {
+.folder__head > span {
   font-size: var(--fs-12);
   font-weight: var(--fw-medium);
   letter-spacing: 0.08em;
@@ -1271,7 +1304,7 @@ ul {
   letter-spacing: -0.04em;
 }
 
-.folder__stat span {
+.folder__stat > span {
   font-size: var(--fs-14);
   color: var(--text-muted);
 }
@@ -1532,7 +1565,7 @@ ul {
   color: var(--text-primary);
 }
 
-.chapter__qs span {
+.chapter__qs li > span {
   font-size: var(--text-body);
   line-height: 1.5;
   color: var(--text-muted);
@@ -3869,7 +3902,7 @@ ul {
   color: var(--green-500);
 }
 
-.surface__shots img {
+.surface__shots .callouts > img {
   width: 100%;
   max-width: 260px;
   height: auto;
@@ -3888,7 +3921,7 @@ ul {
   color: var(--text-primary);
 }
 
-.surface__shots figcaption span {
+.surface__shots figcaption > span {
   font-size: var(--fs-14);
   line-height: 1.5;
   color: var(--text-muted);
@@ -3923,6 +3956,648 @@ ul {
     margin-top: var(--space-xs);
   }
 }
+
+/* Search card: the full screen on the left, two top-half crops stacked on
+   the right */
+.surface__shots--stack {
+  row-gap: var(--space-2xl);
+}
+
+.surface__shots--stack > figure:first-child {
+  grid-row: 1 / span 2;
+}
+
+/* Callouts on the crops are placed down from the top in image widths */
+.surface__shots--stack > figure:not(:first-child) .callouts {
+  container-type: inline-size;
+}
+
+/* From 600px, the two crops take whatever height the full screen leaves
+   them, so both columns end level. Each screen fills its box from the top
+   and is trimmed at the bottom; the image adds no height of its own. On
+   phones the captions wrap too much for this, so the crops keep their size */
+@media (min-width: 600px) {
+  .surface__shots--stack > figure:not(:first-child) {
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-content: stretch;
+  }
+
+  .surface__shots--stack > figure:not(:first-child) .callouts {
+    min-height: calc(var(--space-5xl) * 2);
+  }
+
+  .surface__shots--stack > figure:not(:first-child) .callouts > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - var(--reach));
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+}
+
+/* Longer screenshots in a two-up card keep the Home phone shape, trimmed
+   at the bottom (or the top, when the hook sits low) */
+.surface__shots .callouts > img.surface__trim {
+  aspect-ratio: 360 / 800;
+  object-fit: cover;
+  object-position: top;
+}
+
+.surface__shots .callouts > img.surface__trim--bottom {
+  object-position: bottom;
+}
+
+/* A screen rebuilt in code, framed like the screenshots beside it. The
+   screen is laid out at its real 360 x 800 size and scaled to fit (main.js
+   sets --s from the frame width) */
+.phone-live {
+  position: relative;
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 360 / 800;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-l);
+  background: var(--app-white);
+}
+
+/* Housing.com SRP on Android, rebuilt from Figma. Sizes are the app's own
+   pixels, so they stay in px and scale with the frame as one piece */
+.srp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 800px;
+  overflow: hidden;
+  transform: scale(var(--s, 0.72));
+  transform-origin: 0 0;
+  background: var(--app-bg);
+  font-family: "Rubik", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--app-ink);
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+
+.srp img {
+  display: block;
+  max-width: none;
+}
+
+/* Reset the case study's own text styles inside the screen */
+.srp p,
+.srp b,
+.srp u {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.srp .srp__i16 { width: 16px; height: 16px; flex: none; }
+.srp .srp__i20 { width: 20px; height: 20px; flex: none; }
+.srp .srp__i24 { width: 24px; height: 24px; flex: none; }
+
+.srp .srp__status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--app-white);
+  font-family: "Google Sans Flex", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--app-ink-sys);
+}
+
+.srp .srp__sys {
+  display: flex;
+  align-items: center;
+}
+
+.srp .srp__sys img {
+  width: 16px;
+  height: 16px;
+}
+
+.srp .srp__sys img:first-child {
+  margin-right: -2px;
+}
+
+.srp .srp__head {
+  background: var(--app-white);
+}
+
+.srp .srp__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.srp .srp__field {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 8px 0 16px;
+  border: 1px solid var(--app-stroke);
+  border-radius: 12px;
+}
+
+.srp .srp__query {
+  flex: 1;
+  font-size: 14px;
+  color: var(--app-ink-2);
+  opacity: 0.6;
+}
+
+.srp .srp__rule {
+  align-self: center;
+  width: 1px;
+  height: 20px;
+  margin-left: 4px;
+  background: var(--app-stroke);
+}
+
+/* The entry point: the Houzy icon, 'Abu Dhabi' and 'Dubai' take turns in
+   one spot, crossfading in place. Each change takes 0.6s: the old item
+   fades out as the new one fades in. The slot stays one width for both
+   cities and eases narrower only for the icon. The icon holds longest, as
+   the pause between rounds. One round is 8s. */
+.srp .srp__cycle {
+  display: grid;
+  /* One track exactly as wide as the slot (sized to fit 'Abu Dhabi').
+     Items sit centred and the slot clips them while it changes width */
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  justify-items: unsafe center;
+  width: 20px;
+  height: 20px;
+  /* Extra room on both sides, on top of the field's own 8px */
+  margin: 0 6px;
+  overflow-x: clip;
+  animation: srp-slot 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.srp .srp__cycle-item {
+  grid-area: 1 / 1;
+  font-family: "Google Sans Flex", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+  color: var(--app-brand);
+  animation: 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.srp .srp__cycle-item--houzy {
+  width: 20px;
+  height: 20px;
+  animation-name: srp-houzy;
+}
+
+.srp .srp__cycle-item--abu {
+  opacity: 0;
+  animation-name: srp-abu;
+}
+
+.srp .srp__cycle-item--dubai {
+  opacity: 0;
+  animation-name: srp-dubai;
+}
+
+/* Icon 0–2.4s, change to 3s, Abu Dhabi to 4.5s, change to 5.1s, Dubai to
+   6.6s, change to 7.2s, icon again into the next round. In each change
+   the two items crossfade over the same 0.6s */
+@keyframes srp-slot {
+  0%, 30% { width: 20px; }
+  37.5%, 82.5% { width: 62px; }
+  90%, 100% { width: 20px; }
+}
+
+@keyframes srp-houzy {
+  0%, 30% { opacity: 1; }
+  37.5%, 82.5% { opacity: 0; }
+  90%, 100% { opacity: 1; }
+}
+
+@keyframes srp-abu {
+  0%, 30% { opacity: 0; }
+  37.5%, 56.25% { opacity: 1; }
+  63.75%, 100% { opacity: 0; }
+}
+
+@keyframes srp-dubai {
+  0%, 56.25% { opacity: 0; }
+  63.75%, 82.5% { opacity: 1; }
+  90%, 100% { opacity: 0; }
+}
+
+/* Without motion: the icon alone, standing still */
+@media (prefers-reduced-motion: reduce) {
+  .srp .srp__cycle,
+  .srp .srp__cycle-item {
+    animation: none;
+  }
+}
+
+.srp .srp__tabs {
+  display: flex;
+  gap: 8px;
+  padding-left: 16px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--app-bg);
+}
+
+.srp .srp__tab {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px 0;
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  color: var(--app-ink-3);
+}
+
+.srp .srp__tab--on {
+  min-width: 48px;
+  font-weight: 500;
+  letter-spacing: 0.27px;
+  color: var(--app-ink);
+}
+
+.srp .srp__tab-bar {
+  align-self: stretch;
+  width: auto;
+  height: 3px;
+  margin: 4px -4px 0;
+}
+
+.srp .srp__tab-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+}
+
+.srp .srp__tab-icon img {
+  position: absolute;
+}
+
+.srp .srp__ti-projects { left: 0.5px; top: 1.5px; width: 23px; height: 21px; }
+.srp .srp__ti-path { left: 1.4px; top: 0.4px; width: 18.06px; height: 16.3px; }
+.srp .srp__ti-star { left: 7px; top: 8px; width: 16px; height: 16px; }
+.srp .srp__ti-tag { left: 11px; top: 15px; width: 8.74px; height: 2.85px; }
+.srp .srp__ti-owner { left: 1.5px; top: 0.5px; width: 21px; height: 23px; }
+.srp .srp__ti-ready { left: 0.4px; top: 0.4px; width: 23.2px; height: 23.2px; }
+
+.srp .srp__filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0 16px 16px;
+  overflow: hidden;
+}
+
+.srp .srp__filter {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--app-stroke-2);
+  border-radius: 8px;
+  background: var(--app-white);
+  box-shadow: 0 2px 1px var(--app-shadow-chip);
+  font-family: "Google Sans Flex", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.srp .srp__filter--on {
+  border-color: var(--app-brand-text);
+  background: var(--app-brand-mist);
+  color: var(--app-brand-text);
+}
+
+.srp .srp__filter--tint {
+  background: var(--app-brand-tint);
+}
+
+.srp .srp__filter--text {
+  color: var(--app-ink-5);
+}
+
+.srp .srp__feed {
+  display: grid;
+  gap: 16px;
+  padding: 16px 8px;
+}
+
+.srp .srp__card {
+  overflow: hidden;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--app-white);
+}
+
+.srp .srp__media {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  width: 336px;
+  height: 116px;
+  /* The photo row runs to the card's right edge, past its padding */
+  margin-right: -8px;
+  overflow: hidden;
+}
+
+.srp .srp__photo {
+  position: relative;
+  flex: none;
+  width: 174px;
+  height: 116px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.srp .srp__photo img {
+  position: absolute;
+  object-fit: cover;
+}
+
+.srp .srp__photo-a { left: -10.14px; top: -3.69px; width: 209.28px; height: 122.11px; }
+.srp .srp__photo-b { left: -26.85px; top: -21px; width: 235.22px; height: 218px; }
+
+.srp .srp__badges,
+.srp .srp__meta {
+  position: absolute;
+  left: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.srp .srp__badges { top: 8px; }
+.srp .srp__meta { top: 92px; }
+
+.srp .srp__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--app-overlay);
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.6px;
+  color: var(--app-white);
+}
+
+.srp .srp__chip--icon {
+  padding: 0 4px 0 18px;
+}
+
+.srp .srp__chip--count {
+  color: var(--app-overlay-text);
+}
+
+.srp .srp__chip-verified { position: absolute; left: 2px; top: 2px; width: 12px; height: 12px; }
+.srp .srp__chip-rera { position: absolute; left: 0; top: 0; width: 16px; height: 16px; }
+
+.srp .srp__ago {
+  position: absolute;
+  top: 92px;
+  left: 279px;
+}
+
+.srp .srp__tag {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding-left: 4px;
+  border-radius: 16px;
+  background: var(--app-stroke);
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.6px;
+  white-space: pre;
+  color: color-mix(in srgb, var(--app-ink-2) 80%, transparent);
+}
+
+.srp .srp__tag-icon,
+.srp .srp__tag-chev {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+}
+
+.srp .srp__tag-icon img { width: 10.2px; height: 10.8px; }
+.srp .srp__tag-chev img { width: 8px; height: 8px; }
+
+.srp .srp__heart {
+  position: absolute;
+  top: 6px;
+  left: 312px;
+  width: 16px;
+  height: 14px;
+}
+
+.srp .srp__heart img {
+  position: absolute;
+  left: -10px;
+  top: -10px;
+  width: 36px;
+  height: 34px;
+}
+
+.srp .srp__info {
+  display: grid;
+  gap: 16px;
+  margin-top: 6px;
+  letter-spacing: 0.2px;
+}
+
+.srp .srp__status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  color: var(--app-ink-2);
+}
+
+.srp .srp__status b,
+.srp .srp__btn {
+  font-weight: 500;
+}
+
+.srp .srp__dot {
+  width: 4px;
+  height: 4px;
+}
+
+.srp .srp__price {
+  display: grid;
+  gap: 8px;
+}
+
+.srp .srp__type {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.srp .srp__amount {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.srp .srp__where {
+  display: grid;
+  gap: 4px;
+  margin-top: -2px;
+}
+
+.srp .srp__area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--app-ink-3);
+}
+
+.srp .srp__seller {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 15px;
+  border-top: 1px solid var(--app-stroke);
+}
+
+.srp .srp__avatar {
+  width: 24px;
+  height: 24px;
+  margin-right: -1px;
+  border-radius: 50%;
+}
+
+.srp .srp__who {
+  display: grid;
+  flex: 1;
+}
+
+.srp .srp__who span {
+  color: var(--app-ink-4);
+}
+
+.srp .srp__btn {
+  display: grid;
+  place-items: center;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: var(--app-bg);
+  color: var(--app-brand);
+  white-space: nowrap;
+}
+
+.srp .srp__btn--icon {
+  width: 32px;
+  padding: 0;
+}
+
+.srp .srp__btn--icon img {
+  width: 16px;
+  height: 16px;
+}
+
+.srp .srp__btn--call {
+  background: var(--app-brand);
+}
+
+/* Pinned to the bottom of the screen: the Abu Dhabi strip over the nav */
+.srp .srp__snack {
+  position: absolute;
+  right: 8px;
+  bottom: 68px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--app-white);
+  box-shadow: 0 2px 4px -1px var(--app-shadow-1), 0 2px 8px var(--app-shadow-2);
+  font-family: "Google Sans Flex", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--app-ink-snack);
+}
+
+.srp .srp__snack p {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.srp .srp__snack u {
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: var(--app-brand-text);
+}
+
+.srp .srp__nav {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  gap: 12px;
+  height: 60px;
+  padding: 0 16px;
+  border-top: 1px solid var(--app-stroke-3);
+  background: var(--app-white);
+}
+
+.srp .srp__nav > span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 8px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  color: var(--app-ink-2);
+}
+
+.srp .srp__nav-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.srp .srp__nav-icon img {
+  position: absolute;
+}
+
+.srp .srp__ni-sugg { left: 2px; top: 2.25px; width: 20px; height: 20px; }
+.srp .srp__ni-saved { left: 2px; top: 2.25px; width: 20px; height: 20px; }
+.srp .srp__ni-profile { left: 2px; top: 2.25px; width: 19.4px; height: 19.4px; }
 
 /* A surface that was considered and dropped: dashed, quieter */
 .prob.prob--dropped {
@@ -4081,10 +4756,15 @@ ul {
 
 .flip--scene .flip__stage {
   height: auto;
-  aspect-ratio: 1456 / 884;
+  /* Only the purple hero. The screenshot's content starts 8px in and 6px
+     down (outside that is its own rounded, transparent edge) and the purple
+     ends at y 492, so at 150% zoom the frame shows (492 - 6) × 1.5 = 729
+     of 1456. Shifting by the 8 × 6 edge keeps all four corners even:
+     x 8 × 1.5/1456 of W over the 0.5W overflow = 1.648%,
+     y 6 × 1.5/1456 of W over the 0.41W overflow = 1.508% */
+  aspect-ratio: 1456 / 729;
   border: 0;
-  /* Zoomed to 150% from the top left, so the navbar and hero fill the frame */
-  background: var(--surface-subtle) url("../img/Intnl-Inventory/P1.png") 0 0 / 150% auto no-repeat;
+  background: var(--surface-subtle) url("../img/Intnl-Inventory/P1.png") 1.648% 1.508% / 150% auto no-repeat;
 }
 
 /* Each popup hangs from the 'All India' dropdown in the navbar: its pointer
@@ -4093,8 +4773,8 @@ ul {
    1440px screen, and the screen is shown at 150% (1.5 / 1440 = 0.1042%) */
 .flip--scene .flip__stage > .flip__card {
   position: absolute;
-  top: 8.5%;
-  left: 23.7%;
+  top: 9.07%;
+  left: 22.88%;
   width: calc(var(--w, 300) * 0.1042%);
   max-width: none;
   max-height: none;
@@ -4265,14 +4945,17 @@ ul {
   grid-auto-columns: minmax(140px, 1fr);
 }
 
-.strip__row--desktop {
-  grid-auto-columns: minmax(240px, 1fr);
+/* Desktop screens: two columns, three rows, no sideways scroll */
+.strip__row.strip__row--desktop {
+  grid-auto-flow: row;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  row-gap: var(--space-xl);
+  overflow-x: visible;
 }
 
 /* Wide screens: every screen in the row fits without scrolling */
 @media (min-width: 1100px) {
-  .strip__row--mobile,
-  .strip__row--desktop {
+  .strip__row--mobile {
     grid-auto-columns: minmax(0, 1fr);
     overflow-x: visible;
   }
@@ -4289,6 +4972,50 @@ ul {
   height: auto;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-m);
+}
+
+/* One outline (no fill) across the whole row of screens, around the part
+   that changes between iterations. It sits in the first screen and spans
+   all six columns and five gaps; --t / --h are % of a screen's height
+   (every screen in the row is the same size). */
+.strip__shot {
+  position: relative;
+}
+
+.strip__mark {
+  position: absolute;
+  z-index: 1;
+  top: var(--t);
+  left: 0;
+  width: calc(600% + 5 * var(--space-m));
+  height: var(--h);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-m);
+  pointer-events: none;
+}
+
+/* Desktop home page screens are cropped to the purple hero (top 270 of
+   674). The image crops itself, so the row outline isn't clipped */
+.strip__item .strip__shot--hero img {
+  aspect-ratio: 800 / 270;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* The desktop outline spans one row: two screens and the gap between them,
+   sitting just outside them like the mobile one */
+.strip__mark.strip__mark--pair {
+  left: calc(var(--space-xs) * -1);
+  width: calc(200% + var(--space-m) + 2 * var(--space-xs));
+}
+
+/* When the row fits without scrolling nothing clips it, so it can sit a
+   little outside the screens */
+@media (min-width: 1100px) {
+  .strip__mark {
+    left: calc(var(--space-xs) * -1);
+    width: calc(600% + 5 * var(--space-m) + 2 * var(--space-xs));
+  }
 }
 
 .strip__item figcaption {
@@ -4340,7 +5067,7 @@ ul {
   color: var(--text-primary);
 }
 
-.variant figcaption span {
+.variant figcaption > span {
   font-size: var(--fs-14);
   color: var(--text-muted);
 }
@@ -4365,9 +5092,12 @@ ul {
   text-align: center;
 }
 
+/* The other two case studies, side by side (stacked on narrow screens) */
 .upnext__folder {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: var(--space-2xl);
   margin-top: var(--space-4xl);
   text-align: left;
 }
@@ -4563,6 +5293,32 @@ a.upnext__card:hover {
 
 .lightbox.is-open .lightbox__img {
   transform: none;
+}
+
+/* A screen rebuilt in code, shown in the lightbox at the phone shape and
+   scaled to fit like a phone screenshot */
+.lightbox__screen {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  aspect-ratio: 360 / 800;
+  background: var(--app-white);
+}
+
+.lightbox__screen[hidden] {
+  display: none;
+}
+
+.lightbox--fit-height .lightbox__screen {
+  width: auto;
+  height: calc(100vh - 2 * var(--space-4xl));
+  height: calc(100dvh - 2 * var(--space-4xl));
+  max-width: 100%;
+}
+
+.lightbox--fit-height.lightbox--zoomed .lightbox__screen {
+  width: min(100%, 760px);
+  height: auto;
 }
 
 .lightbox__close {

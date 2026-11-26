@@ -49,10 +49,11 @@ var restore = (function () {
 
 // Lightbox: click any content image (not ones inside links) to view it
 // centred over a dimmed overlay. Esc, the close button or the overlay closes it.
+// Screens rebuilt in code ([data-screen]) open the same way, as a live copy.
 (function () {
   var images = Array.prototype.filter.call(
-    document.querySelectorAll('main img'),
-    function (img) { return !img.closest('a, [data-flip]'); }
+    document.querySelectorAll('main img, main [data-screen]'),
+    function (img) { return !img.closest('a, [data-flip]') && !(img.tagName === 'IMG' && img.closest('[data-screen]')); }
   );
   if (!images.length) return;
 
@@ -64,24 +65,64 @@ var restore = (function () {
   box.hidden = true;
   box.innerHTML =
     '<button class="lightbox__close" type="button" aria-label="Close image"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></button>' +
-    '<img class="lightbox__img" alt="">';
+    '<img class="lightbox__img" alt="">' +
+    '<div class="lightbox__img lightbox__screen" role="img" hidden></div>';
   document.body.appendChild(box);
 
-  var big = box.querySelector('.lightbox__img');
+  var bigImg = box.querySelector('img.lightbox__img');
+  var bigScreen = box.querySelector('.lightbox__screen');
+  var big = bigImg;
   var closeBtn = box.querySelector('.lightbox__close');
   var opener = null;
   var fitMax = '';
 
+  // Scale a live screen copy to the width it is shown at
+  function fitScreen() {
+    var screen = bigScreen.firstElementChild;
+    if (screen && bigScreen.clientWidth) {
+      bigScreen.style.setProperty('--s', bigScreen.clientWidth / screen.offsetWidth);
+    }
+  }
+  window.addEventListener('resize', fitScreen);
+
   // Fitted phone screens: click to zoom in (scroll to read), click again to fit
-  big.addEventListener('click', function () {
+  function toggleZoom() {
     if (!box.classList.contains('lightbox--fit-height')) return;
     var zoomed = box.classList.toggle('lightbox--zoomed');
     big.style.maxHeight = zoomed ? '' : fitMax;
     box.scrollTop = 0;
-  });
+    fitScreen();
+  }
+  bigImg.addEventListener('click', toggleZoom);
+  bigScreen.addEventListener('click', toggleZoom);
+
+  function openScreen(frame) {
+    opener = frame;
+    big = bigScreen;
+    bigImg.hidden = true;
+    bigScreen.hidden = false;
+    // A fresh copy, so its animation starts from the top
+    bigScreen.innerHTML = frame.innerHTML;
+    bigScreen.setAttribute('aria-label', frame.getAttribute('aria-label') || '');
+    box.classList.add('lightbox--fit-height');
+    box.classList.remove('lightbox--zoomed');
+    fitMax = '';
+    big.style.maxHeight = '';
+    box.scrollTop = 0;
+    box.hidden = false;
+    fitScreen();
+    document.documentElement.classList.add('lightbox-open');
+    requestAnimationFrame(function () { box.classList.add('is-open'); });
+    closeBtn.focus();
+  }
 
   function open(img) {
+    if (img.hasAttribute('data-screen')) return openScreen(img);
     opener = img;
+    big = bigImg;
+    bigScreen.hidden = true;
+    bigScreen.innerHTML = '';
+    bigImg.hidden = false;
     big.src = img.getAttribute('data-full') || img.currentSrc || img.src;
     big.alt = img.alt;
     // Phone screenshots open fitted to the screen height so the whole screen
@@ -91,9 +132,17 @@ var restore = (function () {
     var portrait = w > 0 && w <= 1080 && h > w * 1.2 && h < w * 4;
     box.classList.toggle('lightbox--fit-height', portrait || !!img.closest('[data-fit="height"], .tabs__ba, .hero__phones'));
     box.classList.remove('lightbox--zoomed');
-    // ...but small crops are not blown up beyond 1.5x their real size
+    // ...but small crops are not blown up beyond 1.5x their real size. A
+    // cropped thumbnail opens its full screen (data-full), so the cap follows
+    // the full image once it loads
     fitMax = img.naturalHeight ? img.naturalHeight * 1.5 + 'px' : '';
     big.style.maxHeight = fitMax;
+    big.onload = function () {
+      big.onload = null;
+      if (!big.naturalHeight || big.naturalHeight <= img.naturalHeight) return;
+      fitMax = big.naturalHeight * 1.5 + 'px';
+      if (!box.classList.contains('lightbox--zoomed')) big.style.maxHeight = fitMax;
+    };
     box.scrollTop = 0;
     box.hidden = false;
     document.documentElement.classList.add('lightbox-open');
@@ -104,7 +153,7 @@ var restore = (function () {
   function close() {
     box.classList.remove('is-open');
     document.documentElement.classList.remove('lightbox-open');
-    setTimeout(function () { box.hidden = true; big.removeAttribute('src'); }, 200);
+    setTimeout(function () { box.hidden = true; bigImg.removeAttribute('src'); bigScreen.innerHTML = ''; }, 200);
     if (opener) opener.focus();
   }
 
@@ -112,7 +161,7 @@ var restore = (function () {
     img.classList.add('zoomable');
     img.setAttribute('tabindex', '0');
     img.setAttribute('role', 'button');
-    img.setAttribute('aria-label', 'Expand image: ' + img.alt);
+    img.setAttribute('aria-label', 'Expand image: ' + (img.alt || img.getAttribute('aria-label') || ''));
     img.addEventListener('click', function () { open(img); });
     img.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(img); }
@@ -120,7 +169,7 @@ var restore = (function () {
   });
 
   box.addEventListener('click', function (e) {
-    if (e.target !== big) close();
+    if (e.target !== bigImg && !bigScreen.contains(e.target)) close();
   });
   document.addEventListener('keydown', function (e) {
     if (box.hidden) return;
@@ -171,34 +220,73 @@ var restore = (function () {
   });
 })();
 
-// No widows: join the last two words of every text block with a non-breaking
-// space, so a single word never sits alone on the last line.
+// No widows: keep the last two words of every text block together on the last
+// line. They are wrapped in a span that doesn't break inside, which also stops
+// a break at a hyphen ("developer-ready") or before a small badge at the end.
+// Applies to every innermost text block (p, li, headings, labels, pills…).
 (function () {
-  var blocks = document.querySelectorAll(
-    'main p, main h1, main h2, main h3, main h4, main li, main dd, main dt, ' +
-    'main small, main figcaption, main b, main blockquote'
+  function isInline(el) { return getComputedStyle(el).display === 'inline'; }
+
+  // Innermost blocks: not inline themselves, and nothing but inline content inside
+  var blocks = Array.prototype.filter.call(
+    document.querySelectorAll('main *, footer *'),
+    function (el) {
+      if (/^(SCRIPT|STYLE|SVG|PATH|IMG|PICTURE|SOURCE|BR|HR)$/i.test(el.tagName)) return false;
+      if (el.closest('svg, [data-screen]') || isInline(el)) return false;
+      if (!el.textContent.trim()) return false;
+      return !Array.prototype.some.call(el.querySelectorAll('*'), function (c) {
+        return !c.closest('svg') && !/^(BR)$/.test(c.tagName) && !isInline(c);
+      });
+    }
   );
+
   blocks.forEach(function (el) {
     var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     var nodes = [];
     var n;
-    while ((n = walker.nextNode())) {
-      if (n.data.trim()) nodes.push(n);
-    }
-    // Walk back from the end to the last space between two words
-    for (var i = nodes.length - 1; i >= 0; i--) {
-      var t = nodes[i].data.replace(/\s+$/, '');
-      var k = t.lastIndexOf(' ');
-      if (k > 0 && /\S/.test(t.slice(0, k))) {
-        nodes[i].data = t.slice(0, k) + '\u00a0' + t.slice(k + 1) + nodes[i].data.slice(t.length);
-        return;
+    while ((n = walker.nextNode())) nodes.push(n);
+
+    // Scan backwards: skip trailing space, pass the last word, the space
+    // before it, then find where the word before that starts
+    var state = 0; // 0 trailing space, 1 last word, 2 gap, 3 second-to-last word
+    var startNode = null, startOffset = 0;
+    for (var i = nodes.length - 1; i >= 0 && state < 4; i--) {
+      var d = nodes[i].data;
+      for (var j = d.length - 1; j >= 0; j--) {
+        var space = /\s/.test(d[j]);
+        if (state === 0 && !space) state = 1;
+        else if (state === 1 && space) state = 2;
+        else if (state === 2 && !space) state = 3;
+        else if (state === 3 && space) { startNode = nodes[i]; startOffset = j + 1; state = 4; break; }
+        if (state === 3) { startNode = nodes[i]; startOffset = j; }
       }
-      if (k === 0) {
-        // The node starts with a space: the break sits before it
-        nodes[i].data = '\u00a0' + nodes[i].data.slice(1);
-        return;
-      }
     }
+    if (state < 3 || !startNode) return; // fewer than two words
+    // Only one line's worth of text before it? Then there's nothing to protect
+    if (!/\S\s+\S/.test(el.textContent.trim().slice(0, -1))) return;
+
+    // In a flex or grid box a wrapper span becomes its own item and the space
+    // before it is dropped ("ProductDesigner"), so there just make the space
+    // before the last word non-breaking instead.
+    if (/flex|grid/.test(getComputedStyle(el).display)) {
+      for (var a = nodes.length - 1; a >= 0; a--) {
+        var t = nodes[a].data;
+        var m = /\s+(?=\S*\s*$)/.exec(t.replace(/\s+$/, ''));
+        if (m && m.index > 0) {
+          nodes[a].data = t.slice(0, m.index) + '\u00a0' + t.slice(m.index + m[0].length);
+          return;
+        }
+      }
+      return;
+    }
+
+    var range = document.createRange();
+    range.setStart(startNode, startOffset);
+    range.setEnd(el, el.childNodes.length);
+    var keep = document.createElement('span');
+    keep.className = 'nowrap';
+    keep.appendChild(range.extractContents());
+    range.insertNode(keep);
   });
 })();
 
@@ -328,4 +416,26 @@ var restore = (function () {
     next.addEventListener('click', function () { takeOver(); go(1); });
     render();
   });
+})();
+
+// Screens rebuilt in code are laid out at their real app size; scale each
+// one to the width of its frame
+(function () {
+  var frames = document.querySelectorAll('[data-screen]');
+  if (!frames.length) return;
+  function fit(frame) {
+    var screen = frame.firstElementChild;
+    if (screen && frame.clientWidth) {
+      frame.style.setProperty('--s', frame.clientWidth / screen.offsetWidth);
+    }
+  }
+  if ('ResizeObserver' in window) {
+    var ro = new ResizeObserver(function (entries) {
+      entries.forEach(function (e) { fit(e.target); });
+    });
+    Array.prototype.forEach.call(frames, function (f) { ro.observe(f); });
+  } else {
+    Array.prototype.forEach.call(frames, fit);
+    window.addEventListener('resize', function () { Array.prototype.forEach.call(frames, fit); });
+  }
 })();

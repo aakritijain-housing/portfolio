@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Deals">
+<mask id="mask0_0_2009" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+<rect id="Rectangle 28" width="24" height="24" fill="#C4C4C4"/>
+</mask>
+<g mask="url(#mask0_0_2009)">
+<g id="Rectangle 6100">
+</g>
+<rect id="Rectangle 6099" x="3.5" y="3.5" width="7" height="7" rx="1.5" stroke="#222222"/>
+<circle id="Ellipse 600" cx="7" cy="17" r="3.5" stroke="#222222"/>
+<mask id="stroke0_0_2009" fill="white">
+<path d="M16.141 3.55172C16.5228 2.81609 17.4772 2.81609 17.859 3.55172L20.8656 9.34483C21.2474 10.0805 20.7702 11 20.0066 11H13.9934C13.2298 11 12.7526 10.0805 13.1344 9.34483L16.141 3.55172Z"/>
+</mask>
+<path id="Polygon 1" d="M13.9934 11H20.0066C20.7702 11 21.2474 10.0805 20.8656 9.34483L17.859 3.55172C17.4772 2.81609 16.5228 2.81609 16.141 3.55172L13.1344 9.34483C12.7526 10.0805 13.2298 11 13.9934 11Z" stroke-width="2" stroke="#222222" mask="url(#stroke0_0_2009)"/>
+<path id="Vector 825" d="M17 13.5V20.5" stroke-linecap="round" stroke="#222222"/>
+<path id="Vector 826" d="M13.5 17H20.5" stroke-linecap="round" stroke="#222222"/>
+</g>
+</g>
+</svg>
